@@ -1,13 +1,13 @@
-const fs = require('fs/promises');
-((async()=>{
-    const watcher = fs.watch("./");
-    for await (const event of watcher) {
-        console.log(event);
+import { open } from 'node:fs/promises';
 
-    }
-
-})())
-// write and save text to a file,watcher will detect changes
-//and log them
-//whatever text file you create, it will log the event
-//to the console
+let filehandle;
+try {
+  filehandle = await open('test.txt', 'r');
+  const size = (await filehandle.stat()).size;
+  const buffer = Buffer.alloc(size);
+  await filehandle.read(buffer, 0, size, 0);
+  console.log(buffer.toString());
+  console.log(buffer);
+} finally {
+  await filehandle?.close();
+}
